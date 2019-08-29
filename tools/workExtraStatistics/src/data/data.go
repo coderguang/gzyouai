@@ -36,3 +36,7 @@ func ShowAll() {
 		sglog.Debug("============================end show============")
 	}
 }
+
+func GetDataMap() map[string]*def.SPeopleData {
+	return dataMap
+}
