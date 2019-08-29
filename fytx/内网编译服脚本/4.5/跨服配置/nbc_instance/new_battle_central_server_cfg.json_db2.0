@@ -1,0 +1,14 @@
+{
+   "address" : "127.0.0.1",
+   "battle_repotrt_url" : "127.0.0.1:23461",
+   "db_adress" : "127.0.0.1",
+   "is_auto_reconnect" : true,
+   "net_id" : -8,
+   "port" : "23460",
+   "server_id" : 23460,
+   "time_zone" : 8,
+   "mongodb_dbs":"admin",
+   "mongodb_user":"root",
+   "mongodb_pass":"MPHu8CcuReO3",
+   "mongodb" : "127.0.0.1:27087"
+}

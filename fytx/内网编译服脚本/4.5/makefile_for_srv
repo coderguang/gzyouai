@@ -1,0 +1,45 @@
+#set project dir
+
+
+#set build param by command params 
+
+SRV_NAME:= 
+CC	:= 
+CFLAG	:=
+LIBS	:=
+
+################################################don't edit next code ###########
+
+PROJECT_DIR	:=$(shell pwd)
+PROJECT_BIN_DIR	:=../../bin/
+PROJECT_LIB_DIR	:=../../lib/
+
+#set file dir
+SEARCH_FILE	= $(wildcard $(subdir)/*.h $(subdir)/*.cpp)
+CUR_SRC_DIR	= $(shell ls -AxR $(PROJECT_DIR)|grep ":"|tr -d ':')
+CUR_SRC 	:= $(foreach subdir,$(CUR_SRC_DIR),$(SEARCH_FILE))
+CUR_CPP 	:= $(filter %.cpp, $(CUR_SRC))
+
+#set obj dir
+CUR_OBJ		:=$(strip $(CUR_CPP:.cpp=.o))
+CUR_OBJ_EX	:=$(patsubst %.o,%,$(CUR_OBJ))
+-include $(CUR_CPP:.cpp=.d)
+
+
+define build_obj
+$1:$2
+	$(CC) -c $(CFLAG) -o $1 $2 
+endef
+
+$(foreach tmp,$(CUR_OBJ_EX),$(eval $(call build_obj,$(tmp).o,$(tmp).cpp)))
+
+.PHONY:all
+all:$(SRV_NAME)
+
+$(SRV_NAME):$(CUR_OBJ)
+	$(CC) $(CFLAG) -o $(PROJECT_BIN_DIR)$@ $^ $(LIBS)
+
+
+.PHONY:clean
+clean :
+	@$(RM) -rf $(CUR_OBJ) $(PROJECT_BIN_DIR)$(SRV_NAME) $(CUR_DEP)

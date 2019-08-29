@@ -1,0 +1,13 @@
+{
+	"adress":"127.0.0.1",
+	"db_adress" : "127.0.0.1:27017",
+	"time_zone" : 8,
+	"port" : "10003",
+	"server_id" : 10003,
+	"net_id" : -7,
+	"battle_net_port":2028,
+	"mongodb":"mongodb://127.0.0.1:27017",
+	"battle_net_id":10003,
+	"battleUrl":"http://10.21.210.103:88/battle_net/rapidjson",
+	"name":""
+}

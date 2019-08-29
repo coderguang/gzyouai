@@ -1,0 +1,16 @@
+名字统计脚本name_statistics.py使用方法:
+
+按该目录布局上传该脚本文件到服务器，文件根目录需放在服务器server目录下，因为要读取server_config目录下的mongo配置文件gg.json,server.json,
+文件目录结构如下
+---server
+	---name_statistics.py
+	---server_config
+	---log
+
+然后执行 python name_statistics.py 即可,脚本即会自动统计名字并写入mysql数据库
+
+执行完成后会自动退出并打印下面信息,其中100代表数据统计的数量
+
+do insert action,size=  100
+[insert_by_many executemany] total: 100
+name_statistics complete

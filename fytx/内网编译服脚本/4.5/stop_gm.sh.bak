@@ -1,0 +1,5 @@
+#!/bin/bash
+gm_dir="/home/web_gm_manager_tornado"
+gm_pid=`ps -ef | grep "gm" | grep -v grep | awk '{print $2}'`
+cd ${gm_dir}
+kill -9 ${gm_pid}

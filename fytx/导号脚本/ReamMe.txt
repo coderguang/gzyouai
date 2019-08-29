@@ -1,0 +1,20 @@
+简易导号脚本使用方法:
+注意：该脚本并不保证能完全导出数据及删除数据，只会对collections内有使用 “pi” 以及  ”player_id“ 作为key的collections做处理。
+
+
+按该目录布局上传所有脚本文件到服务器，文件根目录需放在服务器server目录下，因为要读取server_config目录下的mongo配置文件gg.json,
+文件目录结构如下
+---server
+	---tool_script
+		---com
+		export_player_data.py
+	---server_config
+	---log
+
+按需求执行下面目录:
+
+1:导号步骤(每次只能导一个号,如果有多个,可以自己写一个传入玩家列表的方法)
+  命令行执行 python export_player_data.py  player_id 即可，player_id 替换成指定的 player_id
+  example: python export_player_data.py 48237571
+  导出的文件会自动放于bak/player_id 文件夹内，同时会打包为 bak/sid_xxx.tar.gz 方便下载
+	

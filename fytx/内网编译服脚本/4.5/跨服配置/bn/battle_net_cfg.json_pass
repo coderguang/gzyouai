@@ -1,0 +1,10 @@
+{
+"battle_net_port":2028,
+"mongodb" : "127.0.0.1",
+"mongodb_dbs":"admin",
+"mongodb_user":"supper",
+"mongodb_pass":"hanhailin@qq.com",
+"battle_net_id":10003,
+"battleUrl":"http://10.21.210.103:88/battle_net/",
+"name":""
+}

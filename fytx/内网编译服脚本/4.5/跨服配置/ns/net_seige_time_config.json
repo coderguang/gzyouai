@@ -1,0 +1,17 @@
+[
+["system_origin",-1,-1,-1],
+["waiting_join_start",1-,-1,-1],
+["waiting_join_over",16,0,1],
+["point_race_cal",21,0,0],
+["point_race_show_start",22,0,0],
+["point_race_show_over",-1,0-1,-1],
+["promotion_race_cal",22,0,1],
+["promotion_race_show_start",-1,-1,-1],
+["promotion_race_show_over",-1,-1,-1],
+["semi_final_race_cal",22,0,1],
+["semi_final_race_show_start",-1,-1,-1],
+["semi_final_race_show_over",-1,-1,-1],
+["final_race_cal",22,0,1],
+["final_race_show_start",-1,-1,-1],
+["final_race_show_over",-1,-1,-1]
+]

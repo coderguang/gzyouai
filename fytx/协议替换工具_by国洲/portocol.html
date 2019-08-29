@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="UTF-8" />
+	<title>协议替换工具</title>
+	<script>
+		var _onclick = function(){
+			var text = document.getElementById("data").value;
+			text = _del_blank(text);
+			text = text.replace(/resp/g,"req")
+			text = text.replace(/resp/g,"req")
+			text = text.replace(/req/g,"req,")
+			text = text.replace(/req,,/g,"req,")
+			text = text.replace(/req, =/g,"req =")
+			var oInfo = document.querySelector( "#info" );
+			oInfo.innerHTML = "";
+
+			_buildArea(oInfo, 'gate_game_protocol.h req', text)
+
+			var resp_text = _resp_text(text);
+			_buildArea(oInfo, 'gate_game_protocol.h resp', resp_text)
+
+			text = _del_equip(text);
+
+			var game_handle_cpp_1 = _game_handle_cpp_text_1(text);
+			_buildArea(oInfo, 'game_handler::game_handler(void)', game_handle_cpp_1)
+
+			var game_handle_h = _game_handle_h_text(text);
+			_buildArea(oInfo, 'game_handler.h', game_handle_h)
+
+			var game_handle_cpp_2 = _game_handle_cpp_text_2(text);
+			_buildArea(oInfo, 'game_handler.cpp', game_handle_cpp_2)
+
+			var self_document_h = _self_document_h(text);
+			_buildArea(oInfo, '自身系统.h', self_document_h)
+
+			var self_document_cpp = _self_document_cpp(text);
+			_buildArea(oInfo, '自身系统.cpp', self_document_cpp)
+		}
+		
+		var _buildArea = function(oInfo, file_name, text){
+			oInfo.innerHTML = oInfo.innerHTML + file_name + "</br>";
+			var area = '<textarea id="data1" rows="10" cols="80">' + text + '</textarea></br></br>'
+			oInfo.innerHTML = oInfo.innerHTML + area;
+		}
+
+		var _del_blank = function(text){
+			text = text.replace(/ */g,"")
+			text = text.replace(/	*/g,"")
+			text = text.replace(/Game2GateBegin/g,"Gate2GameBegin")
+			return text.replace("=Gate2GameBegin+"," = Gate2GameBegin + ");
+		}
+		
+		var _del_equip = function(text){
+			var reCat = / = /g;
+			var reCat2 = /,/g;
+			var begin = text.search(reCat);
+			if(begin == -1){
+				return text;
+			}
+			var end = text.search(reCat2);
+			var str_b = text.substring(0,begin)
+			var str_e = text.substring(end+1)
+			return "\n" + str_b + "," + str_e + '\n'
+		}
+
+		var _resp_text = function(text){
+			var new_text = text.replace(/req/g,"resp")
+			new_text = new_text.replace(" = Gate2GameBegin + "," = Game2GateBegin + ")
+			return new_text
+		}
+
+		var _game_handle_h_text = function(text){
+			var arr = text.split('\n');
+			var new_text = "";
+			for(var i = 0 ; i < arr.length; i++){
+				if(arr[i].search("req") == -1){
+					continue;
+				}
+				arr[i] = arr[i].replace(/,/g, '');
+				new_text += 'void msg_handle_' + arr[i] + '(tcp_session::ptr conn, na::msg::msg_json& m);\n'
+			}
+			return new_text;
+		}
+
+		var _game_handle_cpp_text_1 = function(text){
+			var arr = text.split('\n');
+			var new_text = "";
+			for(var i = 0 ; i < arr.length; i++){
+				if(arr[i].search("req") == -1){
+					continue;
+				}
+				arr[i] = arr[i].replace(/,/g, '');
+				new_text += 'RegisterFunction(sg::protocol::c2g::' + arr[i] + ', game_handler::msg_handle_' + arr[i] + ');\n'
+			}
+			return new_text;
+		}
+
+		var _game_handle_cpp_text_2 = function(text){
+			var keyWorld = document.getElementById("keyworld").value;
+			if(keyWorld == ''){
+				return "缺少自身系统宏变量"
+			}
+			var arr = text.split('\n');
+			var new_text = "";
+			for(var i = 0 ; i < arr.length; i++){
+				if(arr[i].search("req") == -1){
+					continue;
+				}
+				arr[i] = arr[i].replace(/,/g, '');
+				new_text += 'void game_handler::msg_handle_' + arr[i] + '(tcp_session::ptr conn, na::msg::msg_json & m)\n';
+				new_text += '{\n    SystemProcessJson(sg::protocol::g2c::' + arr[i].replace(/req/g, 'resp') + ', ' + keyWorld;
+				new_text += '.handle_' + arr[i] + ');\n}\n\n'
+			}
+			return new_text;
+		}
+		
+		var _self_document_h = function(text){
+			var arr = text.split('\n');
+			var new_text = "";
+			for(var i = 0 ; i < arr.length; i++){
+				if(arr[i].search("req") == -1){
+					continue;
+				}
+				arr[i] = arr[i].replace(/,/g, '');
+				new_text += 'void handle_' + arr[i] + '(na::msg::msg_json& recv_msg, Json::Value& resp_json);\n'
+			}
+			return new_text;
+		}
+		
+		var _self_document_cpp = function(text){
+			var classname = document.getElementById("classname").value;
+			if(classname == ''){
+				return "缺少自身系统类名"
+			}
+			var arr = text.split('\n');
+			var new_text = "";
+			for(var i = 0 ; i < arr.length; i++){
+				if(arr[i].search("req") == -1){
+					continue;
+				}
+				arr[i] = arr[i].replace(/,/g, '');
+				new_text += 'void ' + classname + '::handle_' + arr[i] + '(na::msg::msg_json& recv_msg, Json::Value& resp_json)\n'
+				new_text += '{\n}\n\n'
+			}
+			return new_text;
+		}
+
+	</script>
+</head>
+
+<body>
+	<div id="MyDiv">
+		自身系统宏变量：
+		<input type='type' id='keyworld' size ='30'></input></br>
+		自身系统类名：
+		<input type='type' id='classname' size ='30'></input></br></br>
+		<textarea id="data" rows="10" cols="80">				kingdom_wars_sys_info_resp = Game2GateBegin + 3350,
+				kingdom_wars_storage_info_resp,
+				kingdom_wars_hero_info_resp,
+				kingdom_wars_science_info_resp,
+				kingdom_wars_formation_info_resp,
+				kingdom_wars_player_info_resp,
+				kingdom_wars_player_bag_info_resp,</textarea></br>
+		<input type='button' value='生成相关代码' onclick='_onclick()'>
+		</input>
+		<p id="info"></p>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+{
+"battle_net_port":2028,
+"mongodb":"mongodb://127.0.0.1:27017",
+"battle_net_id":10003,
+"battleUrl":"http://10.21.210.103:88/battle_net/rapidjson",
+"name":""
+}
