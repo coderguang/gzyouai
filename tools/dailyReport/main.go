@@ -1,9 +1,9 @@
 package main
 
 import (
+	"dailyReport/src/scanner"
 	"log"
 	"os"
-	"workExtraStatistics/src/scanner"
 
 	"github.com/coderguang/GameEngine_go/sglog"
 	"github.com/coderguang/GameEngine_go/sgserver"
