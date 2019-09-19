@@ -103,23 +103,47 @@ func processSingleFile(filename string) {
 
 	if finalFliter {
 		//贪婪匹配
+
+		goNum := 0
+		go func() {
+			for {
+				data := <-chanList
+				newReplaceList = append(newReplaceList, data)
+				sglog.Info("replace %s to %s ,still need parse %d", data.RawWords, data.Words, (len(rawList) - len(newReplaceList)))
+
+				if len(newReplaceList) == len(rawList) {
+					break
+				}
+			}
+		}()
 		for _, v := range rawList {
 			ttmp := v
 			ttmp.RawWords = ttmp.Words
+			goNum++
 			go ReplaceString(ttmp, replaceList)
 			//ReplaceString(0, ttmp, replaceList)
+			tindex := 0
+			for {
+				tindex++
+				if goNum-len(newReplaceList) > 20 {
+					if 0 == tindex%1000 {
+						sglog.Debug("to many goNum,sleep")
+						tindex = 1
+					}
+					sgthread.SleepByMillSecond(10)
+				} else {
+					break
+				}
+			}
+
 		}
 
 		for {
-
-			data := <-chanList
-			newReplaceList = append(newReplaceList, data)
-
 			if len(newReplaceList) == len(rawList) {
 				break
-			} else {
-				sglog.Info("replace %s to %s ,still need parse %d", data.RawWords, data.Words, (len(rawList) - len(newReplaceList)))
 			}
+			sglog.Debug("wait result")
+			sgthread.SleepByMillSecond(2)
 		}
 
 	} else {
@@ -131,7 +155,7 @@ func processSingleFile(filename string) {
 				}
 				if strings.Contains(v.Words, vv.Words) {
 					tmp := v
-					tmp.Words = strings.Replace(tmp.Words, vv.Words, "□", 1)
+					tmp.Words = strings.Replace(tmp.Words, vv.Words, GetReplaceTarget(vv.Length), 1)
 					tmp.Length = tmp.Length - vv.Length + 1
 					newReplaceList = append(newReplaceList, tmp)
 				}
@@ -166,18 +190,34 @@ func processSingleFile(filename string) {
 }
 
 func ReplaceString(rawData SensitiveWorld, replaceList SensitiveWorldList) {
+	startDt := sgtime.New()
+	defer func() {
+		endDt := sgtime.New()
+		useTime := endDt.GetTotalSecond() - startDt.GetTotalSecond()
+		sglog.Info("ReplaceString  %s use total %d seconds", rawData.RawWords, useTime)
+	}()
+	sglog.Info("start repalce %s", rawData.RawWords)
+
 	tmp := rawData
 	for i := 0; i < len(replaceList); i++ {
-		if rawData.Length <= replaceList[i].Length {
+		if tmp.Length <= replaceList[i].Length {
 			continue
 		}
-		if strings.Contains(tmp.Words, replaceList[i].Words) {
-			tmp.Words = strings.Replace(tmp.Words, replaceList[i].Words, "□", 1)
+		hadSub := strings.Contains(tmp.Words, replaceList[i].Words)
+		if hadSub {
+			tmp.Words = strings.Replace(tmp.Words, replaceList[i].Words, GetReplaceTarget(replaceList[i].Length), 1)
 			tmp.Length = tmp.Length - replaceList[i].Length + 1
-			i = 0
 		}
 	}
 	chanList <- tmp
+}
+
+func GetReplaceTarget(len int) string {
+	str := ""
+	for i := 0; i < len; i++ {
+		str += "□"
+	}
+	return str
 }
 
 func WriteToNewXlsx(filename string, finallist SensitiveWorldList) {
