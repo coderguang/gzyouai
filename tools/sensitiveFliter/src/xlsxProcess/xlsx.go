@@ -15,7 +15,7 @@ import (
 var chanList chan SensitiveWorld
 
 func init() {
-	chanList = make(chan SensitiveWorld, 1000)
+	chanList = make(chan SensitiveWorld, 10000)
 }
 
 type SensitiveWorld struct {
@@ -106,7 +106,8 @@ func processSingleFile(filename string) {
 		for _, v := range rawList {
 			ttmp := v
 			ttmp.RawWords = ttmp.Words
-			go ReplaceString(ttmp, replaceList)
+			go ReplaceString(0, ttmp, replaceList)
+			//ReplaceString(0, ttmp, replaceList)
 		}
 
 		for {
@@ -164,16 +165,18 @@ func processSingleFile(filename string) {
 	WriteToNewXlsx(filename, finalReplaceList)
 }
 
-func ReplaceString(rawData SensitiveWorld, replaceList SensitiveWorldList) {
+func ReplaceString(index int, rawData SensitiveWorld, replaceList SensitiveWorldList) {
 	tmp := rawData
 	hadMatch := false
-	for _, vv := range replaceList {
-		if rawData.Length <= vv.Length {
+	tmpIndex := index
+	for i := index; i < len(replaceList); i++ {
+		tmpIndex = i
+		if rawData.Length <= replaceList[i].Length {
 			continue
 		}
-		if strings.Contains(tmp.Words, vv.Words) {
-			tmp.Words = strings.Replace(tmp.Words, vv.Words, "□", 1)
-			tmp.Length = tmp.Length - vv.Length + 1
+		if strings.Contains(tmp.Words, replaceList[i].Words) {
+			tmp.Words = strings.Replace(tmp.Words, replaceList[i].Words, "□", 1)
+			tmp.Length = tmp.Length - replaceList[i].Length + 1
 			hadMatch = true
 			break
 		}
@@ -181,7 +184,7 @@ func ReplaceString(rawData SensitiveWorld, replaceList SensitiveWorldList) {
 	if !hadMatch {
 		chanList <- tmp
 	} else {
-		ReplaceString(tmp, replaceList)
+		ReplaceString(tmpIndex, tmp, replaceList)
 	}
 }
 
