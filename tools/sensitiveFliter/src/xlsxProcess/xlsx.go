@@ -5,14 +5,23 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/coderguang/GameEngine_go/sgtime"
+
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/coderguang/GameEngine_go/sglog"
 	"github.com/coderguang/GameEngine_go/sgthread"
 )
 
+var chanList chan SensitiveWorld
+
+func init() {
+	chanList = make(chan SensitiveWorld, 1000)
+}
+
 type SensitiveWorld struct {
-	Words  string
-	Length int
+	Words    string
+	Length   int
+	RawWords string
 }
 
 type SensitiveWorldList []SensitiveWorld
@@ -28,12 +37,22 @@ func (s SensitiveWorldList) Less(i, j int) bool {
 }
 
 func StartProcessFile(fileList []string) {
+	defer func() {
+		close(chanList)
+	}()
 	for _, v := range fileList {
 		processSingleFile(v)
 	}
 }
 
 func processSingleFile(filename string) {
+	startDt := sgtime.New()
+	defer func() {
+		endDt := sgtime.New()
+		useTime := endDt.GetTotalSecond() - startDt.GetTotalSecond()
+		sglog.Info("parase filename %s use total %d seconds", filename, useTime)
+	}()
+
 	xls, err := excelize.OpenFile(filename)
 	if err != nil {
 		sglog.Error("读取文件失败,%s", filename)
@@ -78,16 +97,30 @@ func processSingleFile(filename string) {
 
 	sglog.Info("total %d line,worlds line:%d,min worlds line:%d", totalline, len(rawList), len(replaceList))
 
-	newReplaceList := make(SensitiveWorldList, len(rawList))
-	copy(newReplaceList, rawList)
+	newReplaceList := SensitiveWorldList{}
 
-	finalFliter := false
+	finalFliter := true
 
 	if finalFliter {
 		//贪婪匹配
 		for _, v := range rawList {
-			newReplaceList = append(newReplaceList, ReplaceString(v, replaceList))
+			ttmp := v
+			ttmp.RawWords = ttmp.Words
+			go ReplaceString(ttmp, replaceList)
 		}
+
+		for {
+
+			data := <-chanList
+			newReplaceList = append(newReplaceList, data)
+
+			if len(newReplaceList) == len(rawList) {
+				break
+			} else {
+				sglog.Info("replace %s to %s ,still need parse %d", data.RawWords, data.Words, (len(rawList) - len(newReplaceList)))
+			}
+		}
+
 	} else {
 		//多次匹配
 		for _, v := range rawList {
@@ -124,14 +157,14 @@ func processSingleFile(filename string) {
 		finalReplaceList[i], finalReplaceList[tlen-i-1] = finalReplaceList[tlen-i-1], finalReplaceList[i]
 	}
 
-	for _, v := range finalReplaceList {
-		sglog.Info("%s,%d", v.Words, v.Length)
-	}
+	// for _, v := range finalReplaceList {
+	// 	sglog.Info("%s,%d", v.Words, v.Length)
+	// }
 	sglog.Info("final size is %d", len(finalReplaceList))
 	WriteToNewXlsx(filename, finalReplaceList)
 }
 
-func ReplaceString(rawData SensitiveWorld, replaceList SensitiveWorldList) SensitiveWorld {
+func ReplaceString(rawData SensitiveWorld, replaceList SensitiveWorldList) {
 	tmp := rawData
 	hadMatch := false
 	for _, vv := range replaceList {
@@ -146,9 +179,9 @@ func ReplaceString(rawData SensitiveWorld, replaceList SensitiveWorldList) Sensi
 		}
 	}
 	if !hadMatch {
-		return tmp
+		chanList <- tmp
 	} else {
-		return ReplaceString(tmp, replaceList)
+		ReplaceString(tmp, replaceList)
 	}
 }
 
@@ -166,8 +199,10 @@ func WriteToNewXlsx(filename string, finallist SensitiveWorldList) {
 	for _, v := range finallist {
 		posWorld := "B" + strconv.Itoa(rowIndex)
 		posLength := "C" + strconv.Itoa(rowIndex)
-		file.SetCellStr(sheetName, posWorld, v.Words)
+		posRawStr := "E" + strconv.Itoa(rowIndex)
+		file.SetCellStr(sheetName, posWorld, v.RawWords)
 		file.SetCellStr(sheetName, posLength, strconv.Itoa(v.Length))
+		file.SetCellStr(sheetName, posRawStr, v.Words)
 		rowIndex++
 	}
 
