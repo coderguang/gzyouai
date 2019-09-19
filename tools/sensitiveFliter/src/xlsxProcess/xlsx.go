@@ -106,7 +106,7 @@ func processSingleFile(filename string) {
 		for _, v := range rawList {
 			ttmp := v
 			ttmp.RawWords = ttmp.Words
-			go ReplaceString(0, ttmp, replaceList)
+			go ReplaceString(ttmp, replaceList)
 			//ReplaceString(0, ttmp, replaceList)
 		}
 
@@ -165,27 +165,19 @@ func processSingleFile(filename string) {
 	WriteToNewXlsx(filename, finalReplaceList)
 }
 
-func ReplaceString(index int, rawData SensitiveWorld, replaceList SensitiveWorldList) {
+func ReplaceString(rawData SensitiveWorld, replaceList SensitiveWorldList) {
 	tmp := rawData
-	hadMatch := false
-	tmpIndex := index
-	for i := index; i < len(replaceList); i++ {
-		tmpIndex = i
+	for i := 0; i < len(replaceList); i++ {
 		if rawData.Length <= replaceList[i].Length {
 			continue
 		}
 		if strings.Contains(tmp.Words, replaceList[i].Words) {
 			tmp.Words = strings.Replace(tmp.Words, replaceList[i].Words, "□", 1)
 			tmp.Length = tmp.Length - replaceList[i].Length + 1
-			hadMatch = true
-			break
+			i = 0
 		}
 	}
-	if !hadMatch {
-		chanList <- tmp
-	} else {
-		ReplaceString(tmpIndex, tmp, replaceList)
-	}
+	chanList <- tmp
 }
 
 func WriteToNewXlsx(filename string, finallist SensitiveWorldList) {
