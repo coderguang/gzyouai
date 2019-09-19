@@ -97,7 +97,7 @@ func processSingleFile(filename string) {
 				}
 				if strings.Contains(v.Words, vv.Words) {
 					tmp := v
-					tmp.Words = strings.Replace(tmp.Words, vv.Words, "口", 1)
+					tmp.Words = strings.Replace(tmp.Words, vv.Words, "□", 1)
 					tmp.Length = tmp.Length - vv.Length + 1
 					newReplaceList = append(newReplaceList, tmp)
 				}
@@ -139,7 +139,7 @@ func ReplaceString(rawData SensitiveWorld, replaceList SensitiveWorldList) Sensi
 			continue
 		}
 		if strings.Contains(tmp.Words, vv.Words) {
-			tmp.Words = strings.Replace(tmp.Words, vv.Words, "口", 1)
+			tmp.Words = strings.Replace(tmp.Words, vv.Words, "□", 1)
 			tmp.Length = tmp.Length - vv.Length + 1
 			hadMatch = true
 			break
