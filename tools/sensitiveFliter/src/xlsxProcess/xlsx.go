@@ -164,13 +164,17 @@ func processSingleFile(filename string) {
 	}
 
 	finalReplaceList := SensitiveWorldList{}
-	flitermap := make(map[string]SensitiveWorld)
+	// flitermap := make(map[string]SensitiveWorld)
+
+	// for _, v := range newReplaceList {
+	// 	flitermap[v.Words] = v
+	// }
+
+	// for _, v := range flitermap {
+	// 	finalReplaceList = append(finalReplaceList, v)
+	// }
 
 	for _, v := range newReplaceList {
-		flitermap[v.Words] = v
-	}
-
-	for _, v := range flitermap {
 		finalReplaceList = append(finalReplaceList, v)
 	}
 
