@@ -5,7 +5,6 @@ import (
 	"os"
 	"sensitiveFliter/src/xlsxProcess"
 
-	"github.com/coderguang/GameEngine_go/sgcmd"
 	"github.com/coderguang/GameEngine_go/sglog"
 	"github.com/coderguang/GameEngine_go/sgserver"
 )
@@ -31,6 +30,6 @@ func main() {
 
 	xlsxProcess.StartProcessFile(fileList)
 
-	sgcmd.StartCmdWaitInputLoop()
+	//sgcmd.StartCmdWaitInputLoop()
 	sgserver.StopLogServer()
 }
