@@ -24,5 +24,47 @@
                 "clear": false
             }
         },
+        {
+            "label": "workExtraStatistics",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/workExtraStatistics && go build",
+            "args": [],
+            "problemMatcher": [
+                "$go"
+            ],
+            "group": {
+                "kind": "build", 
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        },
+        {
+            "label": "dailyReport",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}/dailyReport && go build",
+            "args": [],
+            "problemMatcher": [
+                "$go"
+            ],
+            "group": {
+                "kind": "build", 
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
+            }
+        }
     ]
 }

@@ -5,20 +5,29 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "sensitiveFliterTest",
-            "type": "go",
-            "request": "launch",
-            "mode": "auto",
-            "program": "${workspaceFolder}/sensitiveFliter/main.go",
-            "env": {},
-            "args": ["./data/configex.xlsx"]
-        },
-        {
             "name": "sensitiveFliter",
             "type": "go",
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/sensitiveFliter/main.go",
+            "env": {},
+            "args": ["./data/config.xlsx"]
+        },
+        {
+            "name": "dailyReport",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/dailyReport/main.go",
+            "env": {},
+            "args": ["./data/config.xlsx"]
+        },
+        {
+            "name": "workExtraStatistics",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/workExtraStatistics/main.go",
             "env": {},
             "args": ["./data/config.xlsx"]
         }
