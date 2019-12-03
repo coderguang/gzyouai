@@ -8,6 +8,7 @@
 debug
 debug.test
 /log/*
+/server/*
 
 # Test binary, build with `go test -c`
 *.test
