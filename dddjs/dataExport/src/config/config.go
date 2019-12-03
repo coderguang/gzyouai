@@ -54,7 +54,7 @@ func ReadGGCfg() error {
 
 	configfile = strings.Replace(configfile, configlist[0], "", 1)
 
-	sglog.Info(configfile)
+	//sglog.Info(configfile)
 
 	vm := otto.New()
 	_, err = vm.Run(configfile)

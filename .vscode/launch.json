@@ -37,7 +37,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}/dddjs/dataExport/main.go",
             "env": {},
-            "args": ["13416546"]
+            "args": ["1048577","1048578","1048579"]
         }
     ]
 }

@@ -4,6 +4,8 @@ import (
 	"dataExport/src/config"
 	"dataExport/src/db"
 	"log"
+	"os"
+	"strconv"
 
 	"github.com/coderguang/GameEngine_go/sglog"
 	"github.com/coderguang/GameEngine_go/sgserver"
@@ -12,6 +14,30 @@ import (
 
 func main() {
 	sgserver.StartServer(sgserver.ServerTypeLog, "debug", "./log/", log.LstdFlags, true)
+
+	arg_num := len(os.Args) - 1
+	if arg_num < 1 {
+		sglog.Error("please input player id list ")
+		sgthread.DelayExit(2)
+		return
+	}
+
+	playerlist := []string{}
+	for index, v := range os.Args {
+		if index == 0 {
+			continue
+		}
+		_, err := strconv.Atoi(v)
+		if err != nil {
+			sglog.Error("player id ", v, " not a valid pi")
+			sgthread.DelayExit(2)
+			return
+		}
+
+		playerlist = append(playerlist, v)
+	}
+
+	sglog.Info("export player list:", playerlist)
 
 	err := config.ReadGGCfg()
 	if err != nil {
@@ -27,7 +53,7 @@ func main() {
 		return
 	}
 
-	err = db.Gen_shell_script()
+	err = db.Gen_shell_script(playerlist)
 	if err != nil {
 		sglog.Error("gen script ,", err)
 		sgthread.DelayExit(2)

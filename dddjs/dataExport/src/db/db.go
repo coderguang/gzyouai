@@ -2,13 +2,14 @@ package db
 
 import (
 	"dataExport/src/config"
+	"strconv"
 
 	"github.com/coderguang/GameEngine_go/sglog"
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
 )
 
-func Gen_shell_script() error {
+func Gen_shell_script(playerlist []string) error {
 	dsn := "mongodb://" + config.GlobalCfg.DbAuth + config.GlobalCfg.DbIp + ":" + config.GlobalCfg.DbPort
 
 	session, err := mgo.Dial(dsn)
@@ -21,14 +22,25 @@ func Gen_shell_script() error {
 
 	db := session.DB(config.GlobalCfg.DbName)
 
-	c := db.C("hangups")
+	playerC := db.C("players")
 
-	result := bson.M{}
-	err = c.Find(nil).One(&result)
+	for _, k := range playerlist {
+		var result interface{}
+		pi, _ := strconv.Atoi(k)
+		err = playerC.Find(bson.M{"pid": pi}).One(&result)
+		if err != nil {
+			sglog.Error("no this player id", k)
+			return err
+		}
+	}
+
+	collections, err := db.CollectionNames()
 	if err != nil {
-		sglog.Error(err)
+		sglog.Error("get all collections ,err:", err)
 		return err
 	}
+
+	sglog.Info("collections:", collections)
 
 	session.Close()
 
