@@ -1,7 +1,14 @@
 package main
 
-import "github.com/coderguang/GameEngine_go/sgserver"
+import (
+	"log"
+
+	"github.com/coderguang/GameEngine_go/sgcmd"
+	"github.com/coderguang/GameEngine_go/sgserver"
+)
 
 func main() {
-	sgserver.StopLogServer()
+	sgserver.StartServer(sgserver.ServerTypeLog, "debug", "./log/", log.LstdFlags, true)
+
+	sgcmd.StartCmdWaitInputLoop()
 }

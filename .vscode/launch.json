@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/sensitiveFliter/main.go",
+            "program": "${workspaceFolder}/tools/sensitiveFliter/main.go",
             "env": {},
             "args": ["./data/config.xlsx"]
         },
@@ -18,7 +18,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/dailyReport/main.go",
+            "program": "${workspaceFolder}/tools/dailyReport/main.go",
             "env": {},
             "args": ["./data/config.xlsx"]
         },
@@ -27,9 +27,17 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/workExtraStatistics/main.go",
+            "program": "${workspaceFolder}/tools/workExtraStatistics/main.go",
             "env": {},
             "args": ["./data/config.xlsx"]
+        },{
+            "name": "dataExport",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/dddjs/dataExport/main.go",
+            "env": {},
+            "args": ["13416546"]
         }
     ]
 }
