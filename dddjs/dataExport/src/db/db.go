@@ -119,7 +119,7 @@ func Gen_shell_script(playerlist []string) error {
 	sql_str := gen_script_txt(playerlist, playerCollections, sysCollections, fileName)
 
 	//tar file
-	sql_str += "tar -zcvf bak/" + fileName + ".tar.gz bak/" + fileName
+	sql_str += "tar -zcvf bak/" + fileName + ".tar.gz bak/" + fileName + "\n\n"
 
 	shell_file, err := os.OpenFile(fileName+".sh", os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
@@ -132,7 +132,7 @@ func Gen_shell_script(playerlist []string) error {
 
 	sgthread.SleepBySecond(2)
 
-	cmd := exec.Command("shell", fileName+".sh")
+	cmd := exec.Command("bash", fileName+".sh")
 	out, err := cmd.Output()
 	if err != nil {
 		sglog.Error("do mongoexport failed:", err)
