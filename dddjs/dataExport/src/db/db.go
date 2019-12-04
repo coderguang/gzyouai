@@ -119,7 +119,8 @@ func Gen_shell_script(playerlist []string) error {
 	sql_str := gen_script_txt(playerlist, playerCollections, sysCollections, fileName)
 
 	//tar file
-	sql_str += "tar -zcvf bak/" + fileName + ".tar.gz bak/" + fileName + "\n\n"
+	tarfile := "bak/" + fileName + ".tar.gz"
+	sql_str += "tar -zcvf " + tarfile + " bak/" + fileName + "\n\n"
 
 	shell_file, err := os.OpenFile(fileName+".sh", os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
@@ -140,7 +141,7 @@ func Gen_shell_script(playerlist []string) error {
 	}
 	sglog.Info("shell output:\n", string(out))
 
-	sglog.Info("export data success,file zip: bak/", fileName, ".tar.gz")
+	sglog.Info("export data success,file zip:", tarfile)
 
 	session.Close()
 
