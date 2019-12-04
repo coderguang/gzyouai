@@ -138,7 +138,7 @@ func Gen_shell_script(playerlist []string) error {
 		sglog.Error("do mongoexport failed:", err)
 		return err
 	}
-	sglog.Info("shell output:\n", out)
+	sglog.Info("shell output:\n", string(out))
 
 	sglog.Info("export data success,file zip: bak/", fileName, ".tar.gz")
 
