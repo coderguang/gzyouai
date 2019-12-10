@@ -1,10 +1,10 @@
-1、dataExport.zip解压到对应目录
-	---server
-		---server_config
-	---tool
-		---db
-			---dataExport(程序)
-			---config(配置文件）
+1、dataExport.zip解压到对应目录  
+	---server  
+        ---------server_config  
+	---tool  
+	---------db  
+	------------dataExport(程序)  
+	------------config(配置文件）  
 			
 2、添加执行权限  chomod +x dataExport  
 3、执行导号 ./dataExport pid1 pid2 例如(./dataExport 1048577 1048578 1048579)  
