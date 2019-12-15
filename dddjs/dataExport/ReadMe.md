@@ -14,3 +14,15 @@
   	2019/12/27 08:38:53.206 [info ]  logger stop....  
   	2019/12/27 08:38:53 sglog.Info [server stop ok,type= 1]  
 5、下载对应zip解压到本地导入本地数据库即可.
+
+
+
+6、config内的collection.json文件配置说明：  
+	get内的表名为整表导出  
+	ingore内的表为直接忽略  
+	数据库内的其他表，根据pid进行匹配,符合输入玩家id的数据才会被导出  
+	不需要配置mongo地址等配置,程序会自动读取server下的相应配置，但要保证程序所在路径正确
+	
+7、编译方式:
+	安装go，开启go mod
+	执行 go build 即可
