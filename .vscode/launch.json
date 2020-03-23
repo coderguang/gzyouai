@@ -29,7 +29,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}/tools/workExtraStatistics/main.go",
             "env": {},
-            "args": ["./data/config.xlsx"]
+            "args": ["./data/file.txt"]
         },{
             "name": "dataExport",
             "type": "go",
