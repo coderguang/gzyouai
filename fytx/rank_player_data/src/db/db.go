@@ -66,19 +66,23 @@ func Gen_shell_script(severId string, mongourl string, rankNum int) error {
 		}
 	}
 
-	playerC := db.C("sg.players")
+	playerC := db.C("sg.player")
 
 	playerlist := []string{}
+	noExistNum := 0
 	for _, k := range tmpplayerlist {
 		var result interface{}
 		pi, _ := strconv.Atoi(k)
 		err = playerC.Find(bson.M{"pi": pi}).One(&result)
 		if err != nil {
 			sglog.Error("no this player id", k)
-			//continue
+			noExistNum++
+			continue
 		}
 		playerlist = append(playerlist, k)
 	}
+
+	sglog.Info("noexistNum:", noExistNum, ",need export:", len(playerlist))
 
 	collections, err := db.CollectionNames()
 	if err != nil {
