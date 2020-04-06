@@ -226,7 +226,7 @@ func gen_export_player_str(playerlist []string, collectionName string, fileName 
 	}
 	playerIdListStr += "]}\""
 
-	mongourlEx := strings.ReplaceAll(mongourl, "mongodb://", "")
+	mongourlEx := strings.Replace(mongourl, "mongodb://", "", 10)
 
 	str := "mongoexport -h " + mongourlEx +
 		" -d " + serverid + " -c " + collectionName + " -q " + playerIdListStr + " -o bak/" + fileName + "/" + collectionName + ".json \n"
@@ -240,7 +240,7 @@ func gen_player_id_sql(player_id string) string {
 
 func gen_export_collection_str(collectionName string, fileName string, mongourl string, serverid string) string {
 
-	mongourlEx := strings.ReplaceAll(mongourl, "mongodb://", "")
+	mongourlEx := strings.Replace(mongourl, "mongodb://", "", 10)
 
 	str := "mongoexport -h " + mongourlEx + " -p " + config.GlobalCfg.DbPwd +
 		" -d " + serverid + " -c " + collectionName + " -q {} -o bak/" + fileName + "/" + collectionName + ".json \n"
