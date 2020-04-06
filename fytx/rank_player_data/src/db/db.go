@@ -235,7 +235,7 @@ func gen_export_player_str(playerlist []string, collectionName string, fileName 
 }
 
 func gen_player_id_sql(player_id string) string {
-	return "{'pi':{\\$eq:" + player_id + "}" + ",{'player_id':{\\$eq:" + player_id + "}}"
+	return "{'pi':{\\$eq:" + player_id + "}}" + ",{'player_id':{\\$eq:" + player_id + "}}"
 }
 
 func gen_export_collection_str(collectionName string, fileName string, mongourl string, serverid string) string {
