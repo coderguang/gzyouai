@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
+	"strings"
 
 	"github.com/coderguang/GameEngine_go/sglog"
 	"github.com/coderguang/GameEngine_go/sgthread"
@@ -164,7 +165,7 @@ func Gen_shell_script(severId string, mongourl string, rankNum int) error {
 	now := sgtime.New()
 	fileName := "fytx_" + sgtime.YMDString(now) + "_rank_" + strconv.Itoa(len(playerlist))
 
-	sql_str := gen_script_txt(playerlist, playerCollections, sysCollections, fileName)
+	sql_str := gen_script_txt(playerlist, playerCollections, sysCollections, fileName, mongourl, severId)
 
 	//tar file
 	tarfile := "bak/" + fileName + ".tar.gz"
@@ -196,21 +197,24 @@ func Gen_shell_script(severId string, mongourl string, rankNum int) error {
 	return nil
 }
 
-func gen_script_txt(playerlist []string, playerCollections []string, allgetCollections []string, fileName string) string {
+func gen_script_txt(playerlist []string, playerCollections []string, allgetCollections []string, fileName string, mongourl string, severId string) string {
 	str := ""
 	for _, v := range playerCollections {
-		str += gen_export_player_str(playerlist, v, fileName)
+		str += gen_export_player_str(playerlist, v, fileName, mongourl, severId)
 	}
 	for _, v := range allgetCollections {
-		str += gen_export_collection_str(v, fileName)
+		str += gen_export_collection_str(v, fileName, mongourl, severId)
 	}
 	return str
 }
 
-func gen_export_player_str(playerlist []string, collectionName string, fileName string) string {
+func gen_export_player_str(playerlist []string, collectionName string, fileName string, mongourl string, serverid string) string {
 
 	//mongoexport -h 10.66.196.77:27017 -u rwuser -p FKWfWIEz6yLtBOP -d sid67 -c sg.world -q "{$or:[{\"pi\":1048577},{\"pid\":1048578}]}"
 	// -o bak/391122513/sg.world.json  --authenticationMechanism=MONGODB-CR --authenticationDatabase admin
+
+	//inner
+	//mongoexport -h 127.0.0.1:37037   -d sid495 -c sg.world -q "{\"player_id\":178273646}" -o bak/178273646/sg.world.json
 
 	playerIdListStr := "\"{\\$or:["
 	for i, v := range playerlist {
@@ -222,8 +226,10 @@ func gen_export_player_str(playerlist []string, collectionName string, fileName 
 	}
 	playerIdListStr += "]}\""
 
-	str := "mongoexport -h " + config.GlobalCfg.DbIp + ":" + config.GlobalCfg.DbPort + " -u " + config.GlobalCfg.DbUser + " -p " + config.GlobalCfg.DbPwd +
-		" -d " + config.GlobalCfg.DbName + " -c " + collectionName + " -q " + playerIdListStr + " -o bak/" + fileName + "/" + collectionName + ".json --authenticationMechanism=MONGODB-CR --authenticationDatabase admin\n"
+	mongourlEx := strings.ReplaceAll(mongourl, "mongodb://", "")
+
+	str := "mongoexport -h " + mongourlEx +
+		" -d " + serverid + " -c " + collectionName + " -q " + playerIdListStr + " -o bak/" + fileName + "/" + collectionName + ".json \n"
 
 	return str
 }
@@ -232,9 +238,12 @@ func gen_player_id_sql(player_id string) string {
 	return "{'pi':{\\$eq:" + player_id + "}" + ",{'player_id':{\\$eq:" + player_id + "}}"
 }
 
-func gen_export_collection_str(collectionName string, fileName string) string {
-	str := "mongoexport -h " + config.GlobalCfg.DbIp + ":" + config.GlobalCfg.DbPort + " -u " + config.GlobalCfg.DbUser + " -p " + config.GlobalCfg.DbPwd +
-		" -d " + config.GlobalCfg.DbName + " -c " + collectionName + " -q {} -o bak/" + fileName + "/" + collectionName + ".json --authenticationMechanism=MONGODB-CR --authenticationDatabase admin\n"
+func gen_export_collection_str(collectionName string, fileName string, mongourl string, serverid string) string {
+
+	mongourlEx := strings.ReplaceAll(mongourl, "mongodb://", "")
+
+	str := "mongoexport -h " + mongourlEx + " -p " + config.GlobalCfg.DbPwd +
+		" -d " + serverid + " -c " + collectionName + " -q {} -o bak/" + fileName + "/" + collectionName + ".json \n"
 
 	return str
 }
